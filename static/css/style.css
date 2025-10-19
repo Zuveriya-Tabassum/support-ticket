@@ -1,0 +1,139 @@
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+body {
+    margin: 0;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0f2027;
+}
+
+#bg-canvas {
+    position: fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    z-index: -1;
+}
+
+/* Glassmorphic card */
+.container { width: 100%; max-width: 400px; padding: 20px; }
+.signup-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInScale 0.8s forwards;
+}
+
+/* Animations */
+@keyframes fadeInScale { to { transform: scale(1); opacity:1; } }
+.title, .subtitle { text-align:center; color:#fff; margin-bottom:5px; opacity:0; animation:slideDown 0.6s forwards; }
+.title { animation-delay: 0.2s; font-size:1.8rem; }
+.subtitle { animation-delay:0.3s; font-size:0.9rem; color:#ccc; margin-bottom:25px; }
+@keyframes slideDown { from { transform: translateY(-20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+/* Input fields with floating labels */
+.input-group { position:relative; margin-bottom:20px; }
+.input-group input, .input-group select {
+    width:100%; padding:12px; border-radius:10px; border:none; outline:none; background: rgba(255,255,255,0.2); color:#fff; transition:0.3s;
+}
+.input-group input:focus, .input-group select:focus { background: rgba(255,255,255,0.35); }
+.input-group label {
+    position:absolute; top:50%; left:15px; transform:translateY(-50%);
+    color:#ccc; font-size:0.85rem; pointer-events:none; transition:0.3s;
+}
+.input-group input:focus + label, .input-group input:not(:placeholder-shown) + label {
+    top:-10px; font-size:0.75rem; color:#fff;
+}
+
+/* Button */
+.btn {
+    width:100%; padding:12px; margin-top:10px;
+    background:#00bfff; color:#fff; font-size:1rem;
+    border:none; border-radius:12px;
+    cursor:pointer; transition:0.3s;
+}
+.btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+/* Password strength */
+#strength-text { display:block; font-size:0.8rem; margin-top:5px; color:#fff; }
+
+/* Redirect text */
+.redirect { text-align:center; margin-top:20px; font-size:0.85rem; color:#fff; }
+.redirect a { color:#00bfff; text-decoration:none; }
+.redirect a:hover { text-decoration:underline; }
+
+/* Alerts */
+.alert {
+    display:none; padding:12px; margin-bottom:15px;
+    border-radius:8px; text-align:center; font-weight:500; animation:fadeIn 0.5s;
+}
+.alert.success { background:#4caf50; color:#fff; }
+.alert.error { background:#f44336; color:#fff; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+#cursor-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* cursor events pass through */
+    z-index: 1;
+}
+.signup-card {
+    position: relative;
+    z-index: 2; /* above cursor canvas */
+}
+#ticket-bg-canvas {
+    position: fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+}
+#cursor-canvas {
+    z-index:1;
+    pointer-events:none;
+}
+.signup-card {
+    z-index:2;
+    position: relative;
+}
+/* Floating bubbles background */
+.bubbles {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 0; /* stays behind signup card */
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(0) scale(0.5);
+    opacity: 0.9;
+  }
+  to {
+    transform: translateY(-110vh) scale(1.2);
+    opacity: 0;
+  }
+}

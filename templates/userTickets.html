@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Tickets - Support System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --color-dark: #003135;
+      --color-medium: #024950;
+      --color-accent: #964734;
+      --color-aqua: #0FAAAF;
+      --color-light: #AFDDE5;
+      --sidebar-width: 240px;
+      --font-main: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: var(--font-main);
+      background: var(--color-light);
+      color: var(--color-dark);
+      transition: background 0.35s, color 0.35s;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-dark);
+      color: var(--color-light);
+      height: 100vh;
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0; top: 0;
+      box-shadow: 2px 0 18px #02495050;
+      z-index: 10;
+    }
+    .profile-image-container {
+      width: 128px;
+      height: 128px;
+      margin: 0 auto 18px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--color-aqua);
+      background: #fff;
+      box-shadow: 0 2px 14px #00313540;
+      display: block;
+    }
+    .sidebar h2 {
+      margin-bottom: 28px;
+      font-size: 25px;
+      color: var(--color-aqua);
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .sidebar-hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, #0FAAAF33 30%, #00313544 100%);
+      margin: 2px 0 24px 0;
+      width: 80%;
+      align-self: center;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: var(--color-light);
+      margin: 14px 0;
+      font-size: 18px;
+      padding: 12px 10px;
+      border-radius: 9px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: background 0.19s, color 0.17s, box-shadow 0.19s;
+    }
+    .sidebar a.active,
+    .sidebar a:hover {
+      background: var(--color-aqua);
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 2px 12px #0FAAF480;
+    }
+    .sidebar a#logoutBtn {
+      background: var(--color-accent);
+      color: #fff;
+      margin-top: 2rem;
+      font-weight: bold;
+    }
+    .content {
+      margin-left: calc(var(--sidebar-width) + 32px);
+      padding: 48px 32px;
+      background: none;
+      min-height: 100vh;
+      color: var(--color-dark);
+      transition: background 0.3s, color 0.3s;
+    }
+    .ticket-title { 
+      text-align: center;
+      color: var(--color-dark);
+      font-size: 2.2em;
+      font-weight: 800;
+      margin-top: 0;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+    .ticket-subtitle {
+      text-align: center;
+      color: var(--color-medium);
+      font-size: 1.1em;
+      margin-bottom: 25px;
+      font-weight: 400;
+    }
+    .ticket-table {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 32px #00313519;
+      border: 2px solid var(--color-aqua);
+      overflow-x: auto;
+      padding: 16px 0 14px 0;
+      margin-bottom: 14px;
+      animation: fadeInUp 1s;
+      margin-top: 18px;
+      transition: box-shadow 0.18s, border-color 0.18s;
+    }
+    .ticket-table:hover {
+      box-shadow: 0 10px 35px #00313533;
+      border-color: var(--color-accent);
+    }
+    .ticket-thead, .ticket-row, .ticket-empty-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.8fr 2.3fr 1.2fr 1.5fr 1.05fr 1.8fr;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+    }
+    .ticket-thead {
+      font-size: 1.13em;
+      font-weight: 700;
+      color: var(--color-medium);
+      background: none;
+      border-radius: 18px 18px 0 0;
+      height: 54px;
+      margin-bottom: 2px;
+      border-bottom: 2px solid var(--color-aqua);
+      letter-spacing: 1px;
+      transition: border-bottom-color 0.2s;
+    }
+    .ticket-thead:hover {
+      border-bottom-color: var(--color-accent);
+    }
+    .filterselect {
+      border: none;
+      background: none;
+      color: var(--color-medium);
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      appearance: none;
+      min-width: 96px;
+      margin-left: -5px;
+      margin-right: -8px;
+      position: relative;
+      text-align-last: left;
+      border-radius: 7px;
+      transition: border-color 0.18s;
+    }
+    .filterselect:focus,
+    .filterselect:hover {
+      outline: none;
+    }
+    .filterselect option { color: var(--color-dark);}
+    .filterselect-wrap {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: -3px;
+    }
+    .filterselect-wrap:after {
+      content: "▼";
+      position: absolute;
+      left: 60px;
+      top: 52%;
+      transform: translateY(-52%);
+      pointer-events: none;
+      color: var(--color-aqua);
+      font-size: 0.98em;
+      transition: color 0.18s;
+      z-index: 1;
+    }
+    .filterselect:focus + .filterselect-wrap:after,
+    .filterselect:hover + .filterselect-wrap:after {
+      color: var(--color-accent);
+    }
+    .ticket-empty-row {
+      min-height: 44px;
+      border-bottom: none;
+      color: var(--color-medium);
+      font-size: 1.11em;
+      grid-column: 1/-1;
+      text-align: center;
+      background: transparent;
+      pointer-events: none;
+      font-weight: 600;
+      height: 44px;
+    }
+    .ticket-row {
+      font-size: 1.085em;
+      color: var(--color-dark);
+      background: none;
+      border-bottom: 1px solid #8bb3ba37;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: box-shadow 0.18s, border-color 0.18s;
+      border: 2px solid transparent;
+    }
+    .ticket-row:hover {
+      box-shadow: 0 0 13px #0FAAF440;
+      border-color: var(--color-aqua);
+    }
+    .ticket-desc {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      max-width: 260px;
+      transition: color 0.18s;
+    }
+    .ticket-row:hover .ticket-desc {
+      color: var(--color-accent);
+    }
+    .desc-more {
+      color: var(--color-aqua);
+      font-weight: bold;
+      margin-left: 4px;
+    }
+    .desc-modal {
+      position: fixed;
+      z-index: 1001;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.19);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .desc-modal-content {
+      background: #fff;
+      color: var(--color-dark);
+      border-radius: 15px;
+      box-shadow: 0 8px 38px #00313533;
+      padding: 26px 34px;
+      font-size: 18px;
+      max-width: 580px;
+      max-height: 68vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .desc-close {
+      position: absolute;
+      top: 12px;
+      right: 22px;
+      font-size: 30px;
+      cursor: pointer;
+      color: var(--color-accent);
+      transition: color 0.18s;
+    }
+    .desc-close:hover {
+      color: var(--color-aqua);
+    }
+    .status-open { color: var(--color-aqua); font-weight: 700; }
+    .status-pending { color: var(--color-accent); font-weight: 700; }
+    .status-resolved { color: var(--color-aqua); font-weight: 700; }
+    .status-closed { color: #999; font-weight: 700; }
+    .toggle-mode {
+      position: absolute;
+      top: 24px;
+      right: 40px;
+      z-index: 100;
+      margin-top: 15px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      background: var(--color-aqua);
+      color: #fff;
+      font-weight: bold;
+      font-size: 17px;
+      box-shadow: 0 2px 13px #0FAAF480;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .toggle-mode:hover {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(25px);} to { opacity: 1; transform: translateY(0);} }
+    /* DARK MODE PATCHES */
+    body.dark-mode {
+      background: var(--color-dark);
+      color: var(--color-light);
+    }
+    body.dark-mode .sidebar {
+      background: var(--color-medium);
+      color: var(--color-light);
+      box-shadow: 2px 0 18px var(--color-accent);
+    }
+    body.dark-mode .sidebar h2 { color: var(--color-aqua); }
+    body.dark-mode .sidebar a { color: var(--color-light); background: none;}
+    body.dark-mode .sidebar a.active,
+    body.dark-mode .sidebar a:hover {
+      background: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 2px 16px #964734a9;
+    }
+    body.dark-mode .sidebar a#logoutBtn {
+      background: var(--color-aqua);
+      color: #fff;
+    }
+    body.dark-mode .content {
+      background: none;
+      color: var(--color-light);
+    }
+    body.dark-mode .ticket-title { color: var(--color-light); text-shadow: 0 2px 6px #00313555;}
+    body.dark-mode .ticket-subtitle { color: var(--color-light); }
+    body.dark-mode .ticket-table {
+      background: var(--color-medium);
+      color: var(--color-light);
+      border-color: var(--color-aqua);
+      box-shadow: 0 6px 32px #96473433;
+    }
+    body.dark-mode .ticket-table:hover {
+      border-color: var(--color-accent);
+      box-shadow: 0 9px 32px #964734a9;
+    }
+    body.dark-mode .ticket-thead,
+    body.dark-mode .ticket-row {
+      color: var(--color-light);
+      background: none;
+      border-color: transparent;
+    }
+    body.dark-mode .ticket-thead:hover {
+      border-bottom-color: var(--color-accent);
+    }
+    body.dark-mode .ticket-row:hover {
+      border-color: var(--color-aqua);
+      box-shadow: 0 0 14px #0FAAAF80;
+    }
+    /* Make dropdown labels and options visible & no border */
+    body.dark-mode .filterselect,
+    .filterselect {
+      border: none !important;
+      color: var(--color-light);
+      background: none;
+    }
+    body.dark-mode .ticket-thead > div {
+      color: var(--color-light);
+      font-weight: 700;
+    }
+    body.dark-mode .status-resolved { color: var(--color-aqua); font-weight: 700; }
+    body.dark-mode .ticket-desc { color: var(--color-light); }
+    body.dark-mode .ticket-row:hover .ticket-desc { color: #ff9800; }
+    body.dark-mode .desc-modal-content {
+      background: var(--color-dark);
+      color: #fff;
+      box-shadow: 0 8px 38px #00313597;
+    }
+    body.dark-mode .desc-close:hover { color: #0FAAAF; }
+    body.dark-mode .status-open { color: #0FAAAF; }
+    body.dark-mode .status-pending { color: #ff9800; }
+    body.dark-mode .status-closed { color: #bbb; }
+    body.dark-mode .toggle-mode {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    body.dark-mode .toggle-mode:hover {
+      background: var(--color-aqua);
+      color: #fff;
+    }
+    @media(max-width: 1000px) {
+      .content {
+        margin-left: 0 !important;
+        padding: 24px 8px;
+      }
+      .sidebar {
+        position: relative;
+        width: 100vw;
+        height: auto;
+        flex-direction: row;
+        box-shadow: none;
+        padding: 0 0 0 20px;
+        justify-content: flex-start;
+      }
+      .profile-image-container {
+        width: 64px;
+        height: 64px;
+        margin: 0 10px 0 0;
+      }
+      .profile-image {
+        width: 56px;
+        height: 56px;
+        border-width: 2px;
+      }
+      .sidebar h2 {
+        font-size: 18px;
+        margin-bottom: 0;
+        padding: 0 0 0 10px;
+      }
+      .sidebar a {
+        font-size: 16px;
+        padding: 9px 7px;
+        margin: 0 11px 0 0;
+        border-radius: 8px;
+      }
+    }
+    @media(max-width: 600px) {
+      .profile-image-container {
+        width: 40px;
+        height: 40px;
+      }
+      .profile-image {
+        width: 36px;
+        height: 36px;
+        border-width: 2px;
+      }
+    }
+  </style>
+  <script>
+    function applyDarkModeFromStorage() {
+      if (localStorage.getItem('userDarkMode') === 'on') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    function toggleDarkMode() {
+      const on = !document.body.classList.contains('dark-mode');
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('userDarkMode', on ? 'on' : 'off');
+    }
+    document.addEventListener('DOMContentLoaded', applyDarkModeFromStorage);
+
+    function showDesc(el) {
+      var fullText = el.getAttribute("data-full-desc");
+      document.getElementById("descFullText").innerText = fullText;
+      document.getElementById("descModal").style.display = "flex";
+    }
+    function hideDesc() {
+      document.getElementById("descModal").style.display = "none";
+    }
+    function filterTickets() {
+      var cat = document.getElementById('categoryFilter').value.toLowerCase();
+      var pri = document.getElementById('priorityFilter').value.toLowerCase();
+      var stat = document.getElementById('statusFilter').value.toLowerCase();
+      var rows = document.getElementById('ticketBody').children;
+      var shown = 0;
+      for (let row of rows) {
+        if(row.classList.contains('ticket-empty-row')) continue;
+        let match =
+          (cat==="" || row.dataset.category.toLowerCase()===cat) &&
+          (pri==="" || row.dataset.priority.toLowerCase()===pri) &&
+          (stat==="" || row.dataset.status.toLowerCase()===stat);
+        row.style.display = match ? "" : "none";
+        if (match) shown++;
+      }
+      document.getElementById("emptyRow").style.display = shown === 0 ? "" : "none";
+    }
+    document.addEventListener('visibilitychange', applyDarkModeFromStorage);
+  </script>
+</head>
+<body>
+  <button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+  <nav class="sidebar">
+    <div class="profile-image-container">
+      <img src="{{ profile_photo_url or '/static/default_user.png' }}" alt="Profile Photo" class="profile-image">
+    </div>
+    <h2>User Panel</h2>
+    <hr class="sidebar-hr">
+    <a href="{{ url_for('dashboard') }}" id="dashboardBtn" class="{% if current_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+    <a href="{{ url_for('user_tickets_page') }}" id="myTicketsBtn" class="{% if current_page == 'tickets' %}active{% endif %}">🎫 My Tickets</a>
+    <a href="{{ url_for('user_created_tickets_page') }}" id="createTicketBtn" class="{% if current_page == 'create_ticket' %}active{% endif %}">➕ Create Ticket</a>
+    <a href="{{ url_for('user_profile_page') }}" id="profileBtn" class="{% if current_page == 'profile' %}active{% endif %}">👤 Profile</a>
+    <a href="{{ url_for('logout') }}" id="logoutBtn">🚪 Logout</a>
+  </nav>
+  <main class="content">
+    <h2 class="ticket-title">My Tickets</h2>
+    <div class="ticket-subtitle">Below is your ticket history and live status.</div>
+    <section class="ticket-table">
+      <div class="ticket-thead">
+        <div>ID</div>
+        <div>
+          <span class="filterselect-wrap">
+            <select class="filterselect" id="categoryFilter" onchange="filterTickets()">
+              <option value="">Type</option>
+              <option>Login Issue</option>
+              <option>Payment</option>
+              <option>Technical Bug</option>
+              <option>Feature Request</option>
+            </select>
+          </span>
+        </div>
+        <div>Description</div>
+        <div>
+          <span class="filterselect-wrap">
+            <select class="filterselect" id="priorityFilter" onchange="filterTickets()">
+              <option value="">Priority</option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </span>
+        </div>
+        <div>Submitted</div>
+        <div>
+          <span class="filterselect-wrap">
+            <select class="filterselect" id="statusFilter" onchange="filterTickets()">
+              <option value="">Status</option>
+              <option>Open</option>
+              <option>Pending</option>
+              <option>Resolved</option>
+              <option>Closed</option>
+            </select>
+          </span>
+        </div>
+        <div>Agent Assigned</div>
+      </div>
+      <div class="ticket-tbody" id="ticketBody">
+        {% for t in tickets %}
+        <div class="ticket-row"
+             data-category="{{ t.category|e }}"
+             data-priority="{{ t.priority|e }}"
+             data-status="{{ t.status|e }}"
+             data-agent="{{ t.assigned_agent.name if t.assigned_to else 'Pending' }}">
+          <div>{{ t.id }}</div>
+          <div>{{ t.category }}</div>
+          <div class="ticket-desc" onclick="showDesc(this)" data-full-desc="{{ t.description|e }}">
+            {{ t.description[:50] }}{% if t.description|length > 50 %}...<span class="desc-more">See more</span>{% endif %}
+          </div>
+          <div>{{ t.priority }}</div>
+          <div>{{ t.created_at.strftime('%Y-%m-%d') }}</div>
+          <div class="status-{{ t.status|lower }}">{{ t.status }}</div>
+         <div>
+  {% if t.assigned_agent %}
+    {{ t.assigned_agent.name }}
+  {% else %}
+    Pending
+  {% endif %}
+</div>
+
+        </div>
+        {% endfor %}
+        <div id="emptyRow" class="ticket-empty-row" style="display:none;">
+          No tickets found.
+        </div>
+      </div>
+    </section>
+    <div id="descModal" class="desc-modal" style="display:none;">
+      <div class="desc-modal-content">
+        <span class="desc-close" onclick="hideDesc()">&times;</span>
+        <div id="descFullText"></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

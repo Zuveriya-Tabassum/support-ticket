@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Assign Tickets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-dark: #003135;
+      --color-medium: #024950;
+      --color-accent: #964734;
+      --color-aqua: #0FAAAF;
+      --color-light: #AFDDE5;
+      --sidebar-width: 240px;
+      --font-main: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: var(--font-main);
+      background: var(--color-light);
+      color: var(--color-dark);
+      height: 100%;
+      overflow: hidden;
+      transition: background 0.35s, color 0.35s;
+    }
+    .toggle-mode {
+      position: absolute; top: 25px; right: 42px; z-index: 100;
+      background: var(--color-aqua); color: #fff; border: none; border-radius: 9px;
+      padding: 10px 23px; font-size: 16px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 2px 12px #0faaf490; transition: background 0.13s, box-shadow 0.15s, color 0.12s;
+    }
+    .toggle-mode:active { background: var(--color-accent); box-shadow: 0 0 0px #0faaf490;}
+    .toggle-mode:hover { background: var(--color-accent); }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-dark);
+      color: var(--color-light);
+      height: 100vh;
+      position: fixed;
+      top: 0; left: 0;
+      padding: 28px 17px 28px 17px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 18px #02495080;
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      z-index: 10;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .profile-image-container { width: 120px; height: 120px; margin: 0 auto 17px auto; display: flex; align-items: center; justify-content: center; }
+    .profile-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--color-aqua); background: #fff; box-shadow: 0 2px 14px #00313540; display: block; transition: all 0.2s; }
+    .sidebar h2 { margin-bottom: 22px; font-size: 24px; color: var(--color-aqua); font-weight: 700; text-align: center; letter-spacing: 2px; }
+    .sidebar-hr { border: none; height: 2px; background: linear-gradient(90deg, #0FAAAF33 30%, #00313544 100%); margin: 1.5px 0 20px 0; width: 82%; align-self: center; }
+    .sidebar a { text-decoration: none; color: var(--color-light); margin: 10.5px 0; font-size: 17px; padding: 12px 10px; border-radius: 8px; font-weight: 500; display: flex; align-items: center; transition: background 0.19s, color 0.17s;}
+    .sidebar a.active, .sidebar a:hover { background: var(--color-aqua); color: #fff; font-weight: bold; box-shadow: 0 2px 12px #0faaf462; }
+    .sidebar a#logoutBtn { background: var(--color-accent); color: #fff; margin-top: 2rem; font-weight: bold; }
+    .content {
+      margin-left: calc(var(--sidebar-width) + 32px);
+      padding: 51px 34px;
+      background: none; min-height: 100vh;
+      color: var(--color-dark);
+      overflow-y: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      height: 100vh;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    .content::-webkit-scrollbar { display: none; }
+    .top-bar {
+      display: flex; align-items: center; gap: 18px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .assign-tickets-section {
+      margin-top: 22px;
+    }
+    .user-ticket-card {
+      background: #fff; border-radius: 22px; padding: 22px 36px 30px 22px;
+      margin-bottom: 36px; box-shadow: 0 4px 18px #00313516;
+      position: relative; border-left: 8px solid var(--color-aqua);
+      min-width: 300px;
+    }
+    .user-ticket-header {
+      display: flex; align-items: center; gap: 21px; margin-bottom: 1px;
+    }
+    .user-ticket-header .profile-pill {
+      width: 65px; height: 65px; border-radius: 50%;
+      border: 3px solid var(--color-aqua); background: #eee;
+      object-fit: cover;
+    }
+    .user-ticket-header .user-title {
+      font-size: 1.22rem; font-weight: bold; color: var(--color-dark);
+    }
+    .user-ticket-header .user-email {
+      color: var(--color-aqua); font-size: 1.04rem; font-weight: 500;
+    }
+    .ticket-dropdown-btn {
+      margin-left: auto; background: var(--color-aqua);
+      color: #fff; border: none; border-radius: 7px; padding: 8px 18px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 1px 7px #0faaf470; transition: background 0.15s;
+    }
+    .ticket-dropdown-btn:active { background: var(--color-accent);}
+    .ticket-dropdown-btn:hover { background: var(--color-accent);}
+    .recent-ticket-title {
+      font-weight: 600; color: var(--color-accent); font-size:1.08rem;
+    }
+    .ticket-list {
+      margin-top: 14px; padding-top: 10px; border-top: 1.5px solid #eeeeee;
+    }
+    .cards {
+      margin-top: 12px;
+    }
+    .cards > .card + .card { margin-top: 10px; }
+    .card {
+      background: var(--color-light); border-radius: 14px;
+      box-shadow: 0 2px 9px #00313514;
+      padding: 19px 16px; border: 2px solid var(--color-aqua);
+      margin-bottom: 13px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .card h3 {
+      color: var(--color-aqua); font-size: 20px; font-weight: bold; margin-bottom: 9px;
+    }
+    .card .ticket-info {
+      font-size: 15px; color: var(--color-accent); font-weight: 505;
+    }
+    .card .ticket-info label {
+      color: var(--color-dark); font-weight: bold; margin-right: 6px;
+    }
+    .card .card-actions {
+      display: flex; gap: 12px; margin-top: 12px;
+    }
+    .assign-to-select {
+      padding: 6px 10px; border-radius: 7px; border: 1.2px solid var(--color-aqua);
+      background: var(--color-light); color: var(--color-dark);
+      font-size: 15px; margin-right: 14px; margin-bottom: 8px;
+    }
+    .btn {
+      padding: 9px 19px; border: none; border-radius: 9px;
+      background: var(--color-aqua); color: #fff; font-weight: bold;
+      font-size: 15px; box-shadow: 0 2px 13px #0faaf470; cursor: pointer;
+      transition: background 0.13s, color 0.15s;
+    }
+    .btn:active { background: var(--color-accent);}
+    .btn:hover:not([disabled]) { background: var(--color-accent);}
+    .btn:disabled { opacity: 0.6; pointer-events: none; }
+    .tickets-dropdown {
+      margin-top: 18px; display: none;
+    }
+    .ticket-date {
+      color: var(--color-dark);
+    }
+    body.dark-mode .ticket-date,
+    body.dark-mode .card,
+    body.dark-mode .card .ticket-info,
+    body.dark-mode .card h3,
+    body.dark-mode .recent-ticket-title,
+    body.dark-mode .user-ticket-header .user-title,
+    body.dark-mode .user-ticket-header .user-email {
+      color: var(--color-light) !important;
+    }
+    body.dark-mode .card .ticket-info label {
+      color: var(--color-aqua) !important;
+    }
+    body.dark-mode .user-ticket-card {
+      background: var(--color-medium) !important;
+    }
+    body.dark-mode .card {
+      background: var(--color-medium);
+      border-color: var(--color-aqua);
+    }
+    body.dark-mode .btn,
+    body.dark-mode .ticket-dropdown-btn,
+    body.dark-mode .toggle-mode {
+      background: var(--color-accent);
+      color: var(--color-light) !important;
+    }
+    body.dark-mode .btn:hover,
+    body.dark-mode .toggle-mode:hover,
+    body.dark-mode .ticket-dropdown-btn:hover {
+      background: var(--color-aqua);
+    }
+    body.dark-mode {
+      background: var(--color-dark) !important;
+      color: var(--color-light) !important;
+    }
+    body.dark-mode .sidebar {
+      background: var(--color-medium) !important;
+      box-shadow: 2px 0 18px var(--color-accent);
+    }
+    body.dark-mode .sidebar a.active,
+    body.dark-mode .sidebar a:hover {
+      background: var(--color-accent) !important;
+    }
+    @media(max-width: 1000px) {
+      .content {
+        margin-left: 0 !important;
+        padding: 22px 5px;
+      }
+      .sidebar {
+        position: relative;
+        width: 100vw;
+        height: auto;
+        flex-direction: row;
+        box-shadow: none;
+        padding: 0 0 0 20px;
+        justify-content: flex-start;
+        overflow-y: visible;
+      }
+      .profile-image-container {
+        width: 62px;
+        height: 62px;
+        margin: 0 10px 0 0;
+      }
+      .profile-image {
+        width: 45px;
+        height: 45px;
+        border-width: 2px;
+      }
+      .sidebar h2 {
+        font-size: 17px;
+        margin-bottom: 0;
+        padding: 0 0 0 10px;
+      }
+      .sidebar a {
+        font-size: 15px;
+        padding: 8px 7px;
+        margin: 0 12px 0 0;
+        border-radius: 8px;
+      }
+    }
+    @media(max-width: 600px) {
+      .profile-image-container {
+        width: 36px;
+        height: 36px;
+      }
+      .profile-image {
+        width: 28px;
+        height: 28px;
+        border-width: 2px;
+      }
+    }
+  </style>
+  <script>
+    function applyDarkModeFromStorage() {
+      if (localStorage.getItem('adminDarkMode') === 'on') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    function toggleDarkMode() {
+      const on = !document.body.classList.contains('dark-mode');
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('adminDarkMode', on ? 'on' : 'off');
+    }
+    document.addEventListener('DOMContentLoaded', applyDarkModeFromStorage);
+    document.addEventListener('visibilitychange', applyDarkModeFromStorage);
+
+    function assignTicket(ticketId, btn) {
+  const select = btn.parentElement.querySelector('.assign-to-select');
+  const agentId = select.value;
+  fetch('/admin/tickets/assign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ticket_id: ticketId, agent_id: agentId })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      btn.textContent = 'Assigned';
+      btn.disabled = true;
+      select.disabled = true;
+    } else { alert('Error: ' + data.message); }
+  });
+}
+
+    function closeTicket(ticketId, btn) {
+      fetch(`/tickets/${ticketId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'Closed' })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          btn.textContent = 'Closed';
+          btn.disabled = true;
+        }
+        else { alert('Error'); }
+      });
+    }
+    function viewDetails(ticketId) {
+      window.location.href = `/admin/tickets/${ticketId}/details`;
+    }
+    function toggleTickets(id, btn) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const expanded = (el.style.display === 'block');
+      el.style.display = expanded ? 'none' : 'block';
+      if (btn) btn.textContent = (!expanded) ? 'Hide Tickets' : 'Show All Tickets';
+      if (!expanded) el.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  </script>
+</head>
+<body>
+<button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+<div class="sidebar">
+  <div class="profile-image-container">
+    <img src="{{ admin.photo_url or '/static/default_user.png' }}" alt="Admin Photo" class="profile-image" />
+  </div>
+  <h2>Admin Panel</h2>
+  <hr class="sidebar-hr" />
+  <a href="{{ url_for('admin_dashboard') }}" class="{% if pagename == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+  <a href="{{ url_for('admin_all_tickets') }}" >📋 All Tickets</a>
+    <a href="{{ url_for('admin_assign_tickets') }}"class="active">⚡ Assign Tickets</a>
+    <a href="{{ url_for('admin_reports') }}">📊 Reports</a>
+    <a href="{{ url_for('admin_manage_users') }}">👤 Manage Users</a>
+    <!-- <a href="{{ url_for('admin_categories') }}">🗂️ Categories</a>
+    <a href="{{ url_for('admin_settings') }}">⚙️ Settings</a> -->
+    <!-- <a href="{{ url_for('admin_logs') }}">📜 View Logs</a> -->
+    <a href="{{ url_for('admin_profile') }}">🙍 Admin Profile</a>
+    <!-- <a href="{{ url_for('user_dashboard') }}">Switch to User Portal</a> -->
+    <a href="{{ url_for('logout') }}" id="logoutBtn">🚪 Logout</a>
+  </div>
+<div class="content">
+  <div class="top-bar">
+    <h1>Assign Tickets</h1>
+    <button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+  </div>
+  <div class="assign-tickets-section">
+    {% for item in all_user_data %}
+    <div class="user-ticket-card">
+      <div class="user-ticket-header">
+        <img
+          src="{{ item.user.photo_url or '/static/default_user.png' }}"
+          class="profile-pill"
+          alt="User"
+        />
+        <div>
+          <div class="user-title">{{ item.user.name }}</div>
+          <div class="user-email">{{ item.user.email }}</div>
+        </div>
+        {% if item.tickets|length > 1 %}
+        <button class="ticket-dropdown-btn"
+          onclick="toggleTickets('tickets-{{ item.user.id }}', this)">
+          Show All Tickets
+        </button>
+        {% endif %}
+      </div>
+      <div class="ticket-list">
+        <div class="recent-ticket-title">Most Recent Ticket:</div>
+        <div class="card">
+  <h3>
+    Ticket #{{ item.tickets[0].id }}
+    <span class="ticket-date">({{ item.tickets[0].created_at.strftime('%d-%b-%Y %H:%M') }})</span>
+  </h3>
+  <div class="ticket-info"><label>Category:</label> {{ item.tickets[0].category }}</div>
+  <div class="ticket-info"><label>Priority:</label>
+    <span style="color: {{ 'red' if item.tickets[0].priority == 'High' else 'inherit' }};">{{ item.tickets[0].priority }}</span>
+  </div>
+  <div class="ticket-info"><label>Status:</label> {{ item.tickets[0].status }}</div>
+  <div class="ticket-info">
+    <label>Assigned To:</label>
+    {% if item.tickets[0].assigned_to %}
+      {{ agent_map.get(item.tickets[0].assigned_to, "Unknown") }}
+    {% else %}
+      Unassigned
+    {% endif %}
+  </div>
+  <div class="ticket-info"><label>Description:</label> {{ item.tickets[0].description }}</div>
+  <div class="card-actions">
+    <select class="assign-to-select" {% if item.tickets[0].assigned_to %}disabled{% endif %}>
+      <option value="" {% if not item.tickets[0].assigned_to %}selected{% endif %}>Unassigned</option>
+      {% for agent in agents %}
+      <option value="{{ agent.id }}" {% if item.tickets[0].assigned_to == agent.id %}selected{% endif %}>
+        {{ agent.name }} ({{ agent.role }})
+      </option>
+      {% endfor %}
+    </select>
+    <button class="btn"
+  onclick="assignTicket({{ item.tickets[0].id }}, this)"
+  {% if item.tickets[0].assigned_to %}disabled{% endif %}>
+  {% if item.tickets[0].assigned_to %}Assigned{% else %}Assign{% endif %}
+</button>
+
+    <button class="btn"
+      onclick="closeTicket({{ item.tickets[0].id }}, this)"
+      {% if item.tickets[0].status == 'Closed' %}disabled{% endif %}>
+      {% if item.tickets[0].status == 'Closed' %}Closed{% else %}Close{% endif %}
+    </button>
+    <!-- <button class="btn" onclick="viewDetails({{ item.tickets[0].id }})">
+      View Details
+    </button> -->
+  </div>
+</div>
+
+        {% if item.tickets|length > 1 %}
+        <div class="tickets-dropdown" id="tickets-{{ item.user.id }}" style="display:none;">
+          <hr />
+          <span style="font-weight:600;">Other Tickets:</span>
+          <div class="cards">
+            {% for t in item.tickets[1:] %}
+            <div class="card">
+              <h3>
+                Ticket #{{ t.id }}
+                <span class="ticket-date">({{ t.created_at.strftime('%d-%b-%Y %H:%M') }})</span>
+              </h3>
+              <div class="ticket-info"><label>Category:</label> {{ t.category }}</div>
+              <div class="ticket-info"><label>Priority:</label>
+                <span style="color: {{ 'red' if t.priority == 'High' else 'inherit' }};">{{ t.priority }}</span>
+              </div>
+              <div class="ticket-info"><label>Status:</label> {{ t.status }}</div>
+              <div class="ticket-info">
+                <label>Assigned To:</label>
+                {% if t.assigned_to %}
+                  {{ agent_map.get(t.assigned_to, "Unknown") }}
+                {% else %}
+                  Unassigned
+                {% endif %}
+              </div>
+              <div class="ticket-info"><label>Description:</label> {{ t.description }}</div>
+              <div class="card-actions">
+                <select class="assign-to-select" {% if t.assigned_to %}disabled{% endif %}>
+                  <option value="" {% if not t.assigned_to %}selected{% endif %}>Unassigned</option>
+                  {% for agent in agents %}
+                  <option value="{{ agent.id }}" {% if t.assigned_to == agent.id %}selected{% endif %}>
+                    {{ agent.name }} ({{ agent.role }})
+                  </option>
+                  {% endfor %}
+                </select>
+                <button class="btn"
+                  onclick="assignTicket({{ t.id }}, this)"
+                  {% if t.assigned_to %}disabled{% endif %}>
+                  {% if t.assigned_to %}Assigned{% else %}Assign{% endif %}
+                </button>
+                <button class="btn"
+                  onclick="closeTicket({{ t.id }}, this)"
+                  {% if t.status == 'Closed' %}disabled{% endif %}>
+                  {% if t.status == 'Closed' %}Closed{% else %}Close{% endif %}
+                </button>
+                <button class="btn" onclick="viewDetails({{ t.id }})">
+                  View Details
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</body>
+</html>

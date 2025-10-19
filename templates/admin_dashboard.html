@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Support Ticket System</title>
+  <style>
+    :root {
+      --color-dark: #003135;
+      --color-medium: #024950;
+      --color-accent: #964734;
+      --color-aqua: #0FAAAF;
+      --color-light: #AFDDE5;
+      --sidebar-width: 240px;
+      --font-main: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: var(--font-main);
+      background: var(--color-light);
+      color: var(--color-dark);
+      overflow: hidden;
+      transition: background 0.35s, color 0.35s;
+    }
+    .toggle-mode {
+      position: absolute; top: 25px; right: 42px; z-index: 100;
+      background: var(--color-aqua);
+      color: #fff; border: none; border-radius: 9px;
+      padding: 10px 23px; font-size: 16px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 2px 12px #0faaf490;
+      transition: background 0.13s;
+    }
+    .toggle-mode:hover { background: var(--color-accent); }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-dark);
+      color: var(--color-light);
+      height: 100vh;
+      padding: 28px 17px 28px 17px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0; top: 0;
+      box-shadow: 2px 0 18px #02495080;
+      z-index: 10;
+      overflow-y: auto;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+    }
+    .sidebar::-webkit-scrollbar { width: 0 !important; display: none; } /* Chrome/Safari */
+
+    .profile-image-container {
+      width: 120px; height: 120px; margin: 0 auto 17px auto;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .profile-image {
+      width: 100px; height: 100px; object-fit: cover;
+      border-radius: 50%; border: 4px solid var(--color-aqua);
+      background: #fff; box-shadow: 0 2px 14px #00313540;
+      display: block; transition: all 0.2s;
+    }
+    .sidebar h2 {
+      margin-bottom: 22px; font-size: 24px;
+      color: var(--color-aqua); font-weight: 700;
+      text-align: center; letter-spacing: 2px;
+    }
+    .sidebar-hr {
+      border: none; height: 2px;
+      background: linear-gradient(90deg, #0FAAAF33 30%, #00313544 100%);
+      margin: 1.5px 0 20px 0; width: 82%; align-self: center;
+    }
+    .sidebar a {
+      text-decoration: none; color: var(--color-light);
+      margin: 10.5px 0; font-size: 17px; padding: 12px 10px;
+      border-radius: 8px; font-weight: 500;
+      display: flex; align-items: center; transition: background 0.19s, color 0.17s;
+    }
+    .sidebar a.active, .sidebar a:hover {
+      background: var(--color-aqua); color: #fff; font-weight: bold;
+      box-shadow: 0 2px 12px #0faaf462;
+    }
+    .sidebar a#logoutBtn {
+      background: var(--color-accent); color: #fff;
+      margin-top: 2rem; font-weight: bold;
+    }
+    .content {
+      margin-left: calc(var(--sidebar-width) + 32px);
+      padding: 51px 34px;
+      background: none; min-height: 100vh;
+      color: var(--color-dark); transition: background 0.3s, color 0.3s;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .content::-webkit-scrollbar { width: 0 !important; display: none; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 35px; margin-top: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 18px;
+      box-shadow: 0 6px 32px #00313519;
+      padding: 30px 22px; border: 2px solid var(--color-aqua);
+      min-height: 146px; transition: box-shadow 0.18s, border-color 0.18s;
+    }
+    .card h3 {
+      color: var(--color-aqua); font-size: 23px;
+      font-weight: bold; margin-bottom: 13px;
+    }
+    .card div.stats {
+      font-size: 15.5px; color: var(--color-accent);
+      margin-bottom: 7px;
+    }
+    .card:hover {
+      box-shadow: 0 10px 34px #0031353a; border-color: var(--color-accent);
+    }
+    .btn {
+      margin-top: 11px; padding: 11px 25px;
+      border: none; border-radius: 9px;
+      background: var(--color-aqua); color: #fff; font-weight: bold;
+      font-size: 17px; box-shadow: 0 2px 13px #0faaf470;
+      cursor: pointer; transition: background 0.13s, color 0.15s;
+    }
+    .btn:hover { background: var(--color-accent); color: #fff; }
+
+    /* Responsive adjustments for sidebar and content */
+    @media(max-width: 1000px) {
+      .content {
+        margin-left: 0 !important; padding: 22px 5px;
+      }
+      .sidebar {
+        position: relative; width: 100vw; height: auto;
+        flex-direction: row; box-shadow: none; padding: 0 0 0 20px;
+        justify-content: flex-start; overflow-y: visible;
+      }
+      .profile-image-container { width: 62px; height: 62px; margin: 0 10px 0 0; }
+      .profile-image { width: 45px; height: 45px; border-width: 2px; }
+      .sidebar h2 { font-size: 17px; margin-bottom: 0; padding: 0 0 0 10px; }
+      .sidebar a { font-size: 15px; padding: 8px 7px; margin: 0 12px 0 0; border-radius: 8px; }
+      .cards { grid-template-columns: 1fr; }
+    }
+    @media(max-width: 600px) {
+      .profile-image-container { width: 36px; height: 36px; }
+      .profile-image { width: 28px; height: 28px; border-width: 2px; }
+    }
+  </style>
+  <script>
+    function applyDarkModeFromStorage() {
+      if (localStorage.getItem('adminDarkMode') === 'on') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    function toggleDarkMode() {
+      const on = !document.body.classList.contains('dark-mode');
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('adminDarkMode', on ? 'on' : 'off');
+    }
+    document.addEventListener('DOMContentLoaded', applyDarkModeFromStorage);
+    document.addEventListener('visibilitychange', applyDarkModeFromStorage);
+  </script>
+</head>
+<body>
+<button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+<div class="sidebar">
+  <div class="profile-image-container">
+    <img src="{{ admin.photo_url or '/static/default_user.png' }}" alt="Admin Photo" class="profile-image">
+  </div>
+  <h2>Admin Panel</h2>
+  <hr class="sidebar-hr">
+  <a href="{{ url_for('admin_dashboard') }}" class="{% if pagename == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+  <a href="{{ url_for('admin_all_tickets') }}" class="{% if pagename == 'tickets' %}active{% endif %}">📋 All Tickets</a>
+  <a href="{{ url_for('admin_assign_tickets') }}" class="{% if pagename == 'assign' %}active{% endif %}">⚡ Assign Tickets</a>
+  <a href="{{ url_for('admin_reports') }}" class="{% if pagename == 'reports' %}active{% endif %}">📊 Reports</a>
+  <a href="{{ url_for('admin_manage_users') }}" class="{% if pagename == 'users' %}active{% endif %}">👤 Manage Users</a>
+  <!-- <a href="{{ url_for('admin_categories') }}" class="{% if pagename == 'categories' %}active{% endif %}">🗂️ Categories</a>
+  <a href="{{ url_for('admin_settings') }}" class="{% if pagename == 'settings' %}active{% endif %}">⚙️ Settings</a>
+  <a href="{{ url_for('admin_logs') }}" class="{% if pagename == 'logs' %}active{% endif %}">📜 View Logs</a> -->
+  <a href="{{ url_for('admin_profile') }}" class="{% if pagename == 'profile' %}active{% endif %}">🙍 Admin Profile</a>
+  <!-- <a href="{{ url_for('user_dashboard') }}">Switch to User Portal</a> -->
+  <a href="{{ url_for('logout') }}" id="logoutBtn">🚪 Logout</a>
+</div>
+<div class="content">
+  <h1>Welcome, Admin {{ admin.name }}</h1>
+  <p>System overview:</p>
+  <div class="cards">
+    <div class="card">
+      <h3>Total Tickets</h3>
+      <div class="stats">Raised This Month: <span>{{ total_tickets }}</span></div>
+      <div class="stats">Resolved: <span>{{ resolved_count }}</span></div>
+      <div class="stats">Pending: <span>{{ pending_count }}</span></div>
+      <button class="btn" onclick="location.href='{{ url_for('admin_all_tickets') }}'">View All</button>
+    </div>
+    <div class="card">
+      <h3>High Priority</h3>
+      <div class="stats">Urgent Tickets: <span>{{ urgent_count }}</span></div>
+      <div class="stats">Awaiting Assignment: <span>{{ awaiting_assign }}</span></div>
+      <button class="btn" onclick="location.href='{{ url_for('admin_assign_tickets') }}'">Assign</button>
+    </div>
+    <div class="card">
+      <h3>Agents</h3>
+      <div class="stats">Active Agents: <span>{{ agents_count }}</span></div>
+      <div class="stats">Performance Checked</div>
+      <button class="btn" onclick="location.href='{{ url_for('admin_manage_users') }}'">Manage</button>
+    </div>
+    <div class="card">
+      <h3>Reports</h3>
+      <div class="stats">Download performance & resolution analytics.</div>
+      <button class="btn" onclick="location.href='{{ url_for('admin_reports') }}'">Generate</button>
+    </div>
+  </div>
+</div>
+<!-- Place button at top of BODY for all admin pages -->
+<button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+
+<!-- In <head>, add: -->
+<style>
+  :root {
+    --color-dark: #003135;
+    --color-medium: #024950;
+    --color-accent: #964734;
+    --color-aqua: #0FAAAF;
+    --color-light: #AFDDE5;
+    --sidebar-width: 240px;
+    --font-main: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  }
+  body.dark-mode {
+    background: var(--color-dark) !important;
+    color: var(--color-light) !important;
+  }
+  body.dark-mode .sidebar {
+    background: var(--color-medium) !important;
+    color: var(--color-light);
+    box-shadow: 2px 0 18px var(--color-accent);
+  }
+  body.dark-mode .sidebar h2 {
+    color: var(--color-aqua);
+  }
+  body.dark-mode .sidebar a {
+    color: var(--color-light);
+    background: none;
+  }
+  body.dark-mode .sidebar a.active,
+  body.dark-mode .sidebar a:hover {
+    background: var(--color-accent) !important;
+    color: #fff;
+  }
+  body.dark-mode .sidebar a#logoutBtn {
+    background: var(--color-aqua) !important;
+    color: #fff;
+  }
+  body.dark-mode .content {
+    background: none;
+    color: var(--color-light);
+  }
+  body.dark-mode .card {
+    background: var(--color-medium);
+    color: var(--color-light);
+    border-color: var(--color-aqua);
+  }
+  body.dark-mode .card h3 {
+    color: var(--color-aqua);
+  }
+  body.dark-mode .btn, body.dark-mode .toggle-mode {
+    background: var(--color-accent);
+  }
+  body.dark-mode .btn:hover, body.dark-mode .toggle-mode:hover {
+    background: var(--color-aqua);
+  }
+</style>
+<script>
+  function applyDarkModeFromStorage() {
+    if (localStorage.getItem('adminDarkMode') === 'on') {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }
+  function toggleDarkMode() {
+    const on = !document.body.classList.contains('dark-mode');
+    document.body.classList.toggle('dark-mode', on);
+    localStorage.setItem('adminDarkMode', on ? 'on' : 'off');
+  }
+  document.addEventListener('DOMContentLoaded', applyDarkModeFromStorage);
+  document.addEventListener('visibilitychange', applyDarkModeFromStorage);
+</script>
+
+</body>
+</html>

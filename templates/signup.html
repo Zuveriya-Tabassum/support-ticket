@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Ticket System - Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Liquid background -->
+<div class="bubbles">
+  <div class="bubble" style="width:20px;height:20px;left:5%;animation-duration:8s;"></div>
+  <div class="bubble" style="width:35px;height:35px;left:12%;animation-duration:12s;"></div>
+  <div class="bubble" style="width:25px;height:25px;left:20%;animation-duration:9s;"></div>
+  <div class="bubble" style="width:40px;height:40px;left:28%;animation-duration:11s;"></div>
+  <div class="bubble" style="width:18px;height:18px;left:35%;animation-duration:7s;"></div>
+  <div class="bubble" style="width:55px;height:55px;left:42%;animation-duration:15s;"></div>
+  <div class="bubble" style="width:22px;height:22px;left:50%;animation-duration:10s;"></div>
+  <div class="bubble" style="width:30px;height:30px;left:58%;animation-duration:13s;"></div>
+  <div class="bubble" style="width:45px;height:45px;left:65%;animation-duration:14s;"></div>
+  <div class="bubble" style="width:28px;height:28px;left:72%;animation-duration:9s;"></div>
+  <div class="bubble" style="width:60px;height:60px;left:80%;animation-duration:16s;"></div>
+  <div class="bubble" style="width:25px;height:25px;left:87%;animation-duration:10s;"></div>
+  <div class="bubble" style="width:40px;height:40px;left:92%;animation-duration:12s;"></div>
+  <div class="bubble" style="width:18px;height:18px;left:97%;animation-duration:8s;"></div>
+</div>     
+<canvas id="ticket-bg-canvas"></canvas>
+<canvas id="cursor-canvas"></canvas>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="container">
+        <div class="signup-card">
+            <h2 class="title">Sign Up</h2>
+            <p class="subtitle">Create your account to manage tickets</p>
+
+            <div id="alert" class="alert"></div>
+
+            <form onsubmit="event.preventDefault(); signup();">
+                <div class="input-group">
+                    <input type="text" id="name" required>
+                    <label for="name">Full Name</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label for="email">Email Address</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="password" required>
+                    <label for="password">Password</label>
+                    <span id="strength-text"></span>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="confirm_password" required>
+                    <label for="confirm_password">Confirm Password</label>
+                </div>
+
+                <div class="input-group">
+                    <select id="role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                        <!-- <option value="agent">Agent</option> -->
+                    </select>
+                </div>
+
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+            <p class="redirect">Already have an account? <a href="/">Login here</a></p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/signup.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fairyCursor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/water.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ticketBg.js') }}"></script>
+</body>
+</html>

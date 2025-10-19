@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Reports - Support Ticket System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --color-dark: #003135;
+      --color-medium: #024950;
+      --color-accent: #964734;
+      --color-aqua: #0FAAAF;
+      --color-light: #AFDDE5;
+      --sidebar-width: 240px;
+      --font-main: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: var(--font-main);
+      background: var(--color-light);
+      color: var(--color-dark);
+      height: 100%;
+      transition: background 0.3s, color 0.3s;
+    }
+    .toggle-mode {
+      position: absolute;
+      top: 25px; right: 42px; z-index: 100;
+      background: var(--color-aqua);
+      color: #fff; border: none; border-radius: 9px;
+      padding: 10px 23px; font-size: 16px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 2px 12px #0faaf490; transition: background 0.13s;
+    }
+    .toggle-mode:hover { background: var(--color-accent); }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-dark);
+      color: var(--color-light);
+      height: 100vh;
+      padding: 28px 17px 28px 17px;
+      display: flex; flex-direction: column;
+      position: fixed; left: 0; top: 0;
+      box-shadow: 2px 0 18px #02495080;
+      z-index: 10;
+      overflow-y: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .sidebar::-webkit-scrollbar { width: 0 !important; display: none; }
+    .profile-image-container { width: 120px; height: 120px; margin: 0 auto 17px auto; display: flex; align-items: center; justify-content: center; }
+    .profile-image { width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 4px solid var(--color-aqua); background: #fff; box-shadow: 0 2px 14px #00313540; display: block; transition: all 0.2s;}
+    .sidebar h2 { margin-bottom: 22px; font-size: 24px; color: var(--color-aqua); font-weight: 700; text-align: center; letter-spacing: 2px;}
+    .sidebar-hr { border: none; height: 2px; background: linear-gradient(90deg, #0FAAAF33 30%, #00313544 100%); margin: 1.5px 0 20px 0; width: 82%; align-self: center;}
+    .sidebar a { text-decoration: none; color: var(--color-light); margin: 10.5px 0; font-size: 17px; padding: 12px 10px; border-radius: 8px; font-weight: 500; display: flex; align-items: center; transition: background 0.19s, color 0.17s;}
+    .sidebar a.active, .sidebar a:hover { background: var(--color-aqua); color: #fff; font-weight: bold; box-shadow: 0 2px 12px #0faaf462;}
+    .sidebar a#logoutBtn { background: var(--color-accent); color: #fff; margin-top: 2rem; font-weight: bold; }
+    .content {
+      margin-left: calc(var(--sidebar-width) + 32px);
+      padding: 40px 30px;
+      background: none; min-height: 100vh;
+      color: var(--color-dark);
+      overflow-y: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .content::-webkit-scrollbar { display: none !important; width:0 !important; }
+    .report-filter-form { display: flex; align-items: center; gap: 15px; background: #fff; border-radius: 10px; box-shadow: 0 2px 14px #00313519; padding: 15px 25px; margin-bottom: 36px; font-size: 15px;}
+    .report-filter-form select, .report-filter-form input[type="date"] { padding: 6px 9px; border-radius: 5px; border: 1.2px solid var(--color-aqua); background: var(--color-light); color: var(--color-dark);}
+    .report-filter-form label { font-weight: 500; color: var(--color-accent);}
+    .report-filter-form .btn { background: var(--color-aqua); color: #fff; border: none; border-radius: 6px; font-weight: bold; padding: 7px 15px; box-shadow: 0 1px 5px #0faaf450; cursor:pointer;}
+    .report-filter-form .btn:hover { background: var(--color-accent);}
+    .download-row {
+      margin-top:22px; margin-bottom:32px;
+      display: flex; gap: 18px; flex-wrap: wrap;
+    }
+    .download-row .btn {
+      background: var(--color-aqua);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 8px;
+      box-shadow: 0 1px 8px #0faaf452;
+      padding: 9px 20px;
+      font-size: 15px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.13s;
+    }
+    .download-row .btn:hover {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    .kpi-row { display: flex; gap: 30px; margin-bottom: 25px; flex-wrap: wrap;}
+    .kpi-card {
+      background: #fff;
+      border-radius: 15px;
+      padding: 30px 32px 28px 32px;
+      box-shadow: 0 3px 18px #00313519;
+      border-left: 6px solid var(--color-aqua);
+      min-width: 175px;
+      font-size: 18px;
+      margin-bottom:8px;
+      flex: 1 1 175px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .kpi-card b { font-size: 1.6em; color: var(--color-accent);}
+    .summary-table { width: 100%; margin-top: 39px; border-collapse: collapse; box-shadow: 0 2px 22px #00313513;}
+    .summary-table th, .summary-table td { font-size: 14.5px; padding: 12px 14px; border-bottom: 1.2px solid #eee; text-align: center;}
+    .summary-table th { background: var(--color-medium); color: #fff;}
+    .summary-table tr:last-child td { border-bottom: none;}
+    .summary-table tr:hover td { background: #0FAAAF11;}
+    .report-charts {
+      display: flex; gap: 25px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .report-charts canvas {
+      flex: 1 1 30%;
+      max-width: 320px;
+      height: 180px !important;
+      border-radius: 12px;
+      background: #f0fbfc;
+      box-shadow: 0 2px 19px #0031351e;
+    }
+    @media(max-width: 1000px) {
+      .content { margin-left: 0 !important; padding: 22px 10px;}
+      .sidebar { position: relative; width: 100vw; height: auto; flex-direction: row; box-shadow: none; padding: 0 0 0 20px; justify-content: flex-start; overflow-y: visible;}
+      .profile-image-container { width: 62px; height: 62px; margin: 0 10px 0 0; }
+      .profile-image { width: 45px; height: 45px; border-width: 2px; }
+      .sidebar h2 { font-size: 17px; margin-bottom: 0; padding: 0 0 0 10px; }
+      .sidebar a { font-size: 15px; padding: 8px 7px; margin: 0 12px 0 0; border-radius: 8px; }
+      .kpi-row { flex-direction: column; gap: 15px;}
+      .report-charts { flex-direction: column; gap: 25px; justify-content: center;}
+      .report-charts canvas { max-width: 100%; height: 200px !important; }
+      .download-row { gap: 15px; }
+    }
+    @media(max-width: 600px) {
+      .profile-image-container { width: 36px; height: 36px; }
+      .profile-image { width: 28px; height: 28px; border-width: 2px; }
+    }
+    /* DARK MODE COMPLETE COVERAGE */
+    body.dark-mode {
+      background: var(--color-dark) !important;
+      color: var(--color-light) !important;
+    }
+    body.dark-mode .sidebar {
+      background: var(--color-medium) !important;
+      color: var(--color-light);
+      box-shadow: 2px 0 18px var(--color-accent);
+    }
+    body.dark-mode .sidebar h2, body.dark-mode .card h3 { color: var(--color-aqua);}
+    body.dark-mode .sidebar a { color: var(--color-light); background: none;}
+    body.dark-mode .sidebar a.active, body.dark-mode .sidebar a:hover { background: var(--color-accent) !important; color: #fff;}
+    body.dark-mode .sidebar a#logoutBtn { background: var(--color-aqua) !important; color: #fff;}
+    body.dark-mode .content { background: var(--color-dark) !important; color: var(--color-light);}
+    body.dark-mode .kpi-card, 
+    body.dark-mode .summary-table,
+    body.dark-mode .report-filter-form,
+    body.dark-mode .download-row,
+    body-dark.mode .report-charts
+    {
+      background: var(--color-medium) !important;
+      color: var(--color-light) !important;
+    }
+    body.dark-mode .download-row .btn {
+      background: var(--color-accent); color: #fff;
+    }
+    body.dark-mode .download-row .btn:hover {
+      background: var(--color-aqua); color: #fff;
+    }
+    body.dark-mode .summary-table th { background: var(--color-dark);}
+    body.dark-mode .summary-table td { color: var(--color-light);}
+    body.dark-mode .report-filter-form {
+      background: var(--color-medium);
+      color: var(--color-light);
+    }
+    body.dark-mode .report-charts canvas {
+      background: #04363b !important;
+      box-shadow: 0 2px 17px #0faaf448;
+    }
+    body.dark-mode .content::-webkit-scrollbar-thumb,
+    body.dark-mode .sidebar::-webkit-scrollbar-thumb { background: var(--color-accent);}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function applyDarkModeFromStorage() {
+      if(localStorage.getItem('adminDarkMode') === 'on') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    function toggleDarkMode() {
+      const on = !document.body.classList.contains('dark-mode');
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('adminDarkMode', on ? 'on' : 'off');
+    }
+    document.addEventListener('DOMContentLoaded', applyDarkModeFromStorage);
+    document.addEventListener('visibilitychange', applyDarkModeFromStorage);
+  </script>
+</head>
+<body>
+<button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+<div class="sidebar">
+  <div class="profile-image-container">
+    <img src="{{ admin.photo_url or '/static/default_user.png' }}" alt="Admin Photo" class="profile-image">
+  </div>
+  <h2>Admin Panel</h2>
+  <hr class="sidebar-hr" />
+  <a href="{{ url_for('admin_dashboard') }}" class="{% if pagename == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+  <a href="{{ url_for('admin_all_tickets') }}" class="{% if pagename == 'tickets' %}active{% endif %}">📋 All Tickets</a>
+  <a href="{{ url_for('admin_assign_tickets') }}" class="{% if pagename == 'assign' %}active{% endif %}">⚡ Assign Tickets</a>
+  <a href="{{ url_for('admin_reports') }}" class="{% if pagename == 'reports' %}active{% endif %}">📊 Reports</a>
+  <a href="{{ url_for('admin_manage_users') }}" class="{% if pagename == 'users' %}active{% endif %}">👤 Manage Users</a>
+  <!-- <a href="{{ url_for('admin_categories') }}" class="{% if pagename == 'categories' %}active{% endif %}">🗂️ Categories</a> -->
+  <!-- <a href="{{ url_for('admin_settings') }}" class="{% if pagename == 'settings' %}active{% endif %}">⚙️ Settings</a> -->
+  <!-- <a href="{{ url_for('admin_logs') }}" class="{% if pagename == 'logs' %}active{% endif %}">📜 View Logs</a> -->
+  <a href="{{ url_for('admin_profile') }}" class="{% if pagename == 'profile' %}active{% endif %}">🙍 Admin Profile</a>
+  <!-- <a href="{{ url_for('user_dashboard') }}">Switch to User Portal</a> -->
+  <a href="{{ url_for('logout') }}" id="logoutBtn">🚪 Logout</a>
+</div>
+
+<div class="content">
+  <h1>Reports & Analytics</h1>
+
+  <form class="report-filter-form" method="get">
+    <label>From:</label>
+    <input type="date" name="start_date" value="{{ start_date }}">
+    <label>To:</label>
+    <input type="date" name="end_date" value="{{ end_date }}">
+    <label>Status:</label>
+    <select name="status">
+      <option value="">All</option>
+      <option value="Open">Open</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Resolved">Resolved</option>
+      <option value="Closed">Closed</option>
+    </select>
+    <label>Agent:</label>
+    <select name="agent_id">
+      <option value="">All Agents</option>
+      {% for agent in agents %}
+        <option value="{{ agent.id }}" {% if request.args.get('agent_id')|int == agent.id %}selected{% endif %}>{{ agent.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn" type="submit">Apply</button>
+  </form>
+
+  <div class="download-row">
+    <button class="btn" onclick="window.print()">Print Report</button>
+    <a class="btn" href="{{ url_for('download_report', format='csv', **request.args) }}">Download CSV</a>
+    <a class="btn" href="{{ url_for('download_report', format='xlsx', **request.args) }}">Download Excel</a>
+    <a class="btn" href="{{ url_for('download_report', format='pdf', **request.args) }}">Download PDF</a>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">Total Tickets<br><b>{{ total_tickets }}</b></div>
+    <div class="kpi-card">Resolved<br><b>{{ resolved_count }}</b></div>
+    <div class="kpi-card">Pending<br><b>{{ pending_count }}</b></div>
+    <div class="kpi-card">Avg. Resolve Time<br><b>{{ avg_res_time }}</b></div>
+  </div>
+
+  <div class="report-charts">
+    <canvas id="ticketsBarChart" height="160"></canvas>
+    <canvas id="ticketsPieChart" height="160"></canvas>
+    <canvas id="ticketsLineChart" height="160"></canvas>
+  </div>
+
+  <table class="summary-table">
+    <tr>
+      <th>Category</th>
+      <th>Open</th>
+      <th>Closed</th>
+      <th>Resolved</th>
+      <th>Avg. Time to Resolve</th>
+    </tr>
+    {% for row in summary_by_category %}
+    <tr>
+      <td>{{ row.category }}</td>
+      <td>{{ row.open }}</td>
+      <td>{{ row.closed }}</td>
+      <td>{{ row.resolved }}</td>
+      <td>{{ row.avg_time }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<script>
+  const barLabels = {{ months|tojson }};
+  const barData = {{ bar_chart_data|tojson }};
+  const statusLabels = {{ status_labels|tojson }};
+  const statusData = {{ status_counts|tojson }};
+  const lineLabels = barLabels;
+  const lineData = barData;
+
+  new Chart(document.getElementById('ticketsBarChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: barLabels,
+      datasets: [{
+        label: 'Tickets Raised Per Month',
+        data: barData,
+        backgroundColor: 'rgba(15, 170, 175, 0.7)',
+        borderColor: 'rgba(15, 170, 175, 1.0)',
+        borderWidth: 2
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+
+  new Chart(document.getElementById('ticketsPieChart').getContext('2d'), {
+    type: 'pie',
+    data: {
+      labels: statusLabels,
+      datasets: [{
+        label: 'Tickets By Status',
+        data: statusData,
+        backgroundColor: [
+          'rgba(15, 170, 175, 0.7)',
+          'rgba(150, 71, 52, 0.7)',
+          'rgba(2, 73, 80, 0.7)',
+          'rgba(175, 221, 229, 0.7)'
+        ]
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+
+  new Chart(document.getElementById('ticketsLineChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: lineLabels,
+      datasets: [{
+        label: 'Tickets Trend',
+        data: lineData,
+        backgroundColor: 'rgba(2, 73, 80, 0.3)',
+        borderColor: 'rgba(150, 71, 52, 0.9)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.18
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+</script>
+</body>
+</html>

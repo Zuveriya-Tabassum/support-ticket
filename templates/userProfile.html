@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --color-dark: #003135;
+      --color-medium: #024950;
+      --color-accent: #964734;
+      --color-aqua: #0FAAAF;
+      --color-light: #AFDDE5;
+      --sidebar-width: 240px;
+      --font-main: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      font-family: var(--font-main);
+      margin: 0;
+      background: linear-gradient(135deg, #AFDDE5 0%, #0FAAAF 90%);
+      transition: background 0.35s, color 0.35s;
+      color: var(--color-dark);
+    }
+    /* Toggle Button STYLED LIKE DASHBOARD */
+    .toggle-mode {
+      position: fixed;
+      top: 24px;
+      right: 40px;
+      z-index: 101;
+      background: var(--color-aqua);
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 11px 23px;
+      font-family: var(--font-main);
+      font-size: 0.97em;
+      font-weight: bold;
+      box-shadow: 0 2px 16px #0faaf044;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, box-shadow 0.22s;
+      outline: none;
+    }
+    .toggle-mode:hover {
+      background: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 2px 22px #96473444;
+    }
+    body.dark-mode .toggle-mode {
+      background: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 2px 22px #00313588;
+    }
+    body.dark-mode .toggle-mode:hover {
+      background: var(--color-aqua);
+      color: #fff;
+      box-shadow: 0 2px 26px #0faaf133;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-dark);
+      color: var(--color-light);
+      height: 100vh;
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      position: fixed; left: 0; top: 0;
+      box-shadow: 2px 0 18px #02495050;
+      z-index: 10;
+    }
+    .profile-image-container {
+      width: 128px; height: 128px;
+      margin: 0 auto 18px auto;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .profile-image {
+      width: 120px; height: 120px; object-fit: cover;
+      border-radius: 50%; border: 4px solid var(--color-aqua);
+      background: #fff; box-shadow: 0 2px 14px #00313540; display: block;
+    }
+    .sidebar h2 {
+      margin-bottom: 14px;
+      font-size: 25px;
+      color: var(--color-aqua);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    .sidebar-hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, #0FAAAF33 30%, #00313544 100%);
+      margin: 8px 0 24px 0;
+      width: 80%;
+      align-self: center;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: var(--color-light);
+      margin: 14px 0;
+      font-size: 18px;
+      padding: 12px 10px;
+      border-radius: 9px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: background 0.19s, color 0.17s;
+    }
+    .sidebar a.active,
+    .sidebar a:hover {
+      background: var(--color-aqua);
+      color: #fff;
+      font-weight: bold;
+    }
+    .sidebar a#logoutBtn {
+      background: var(--color-accent);
+      color: #fff;
+      margin-top: 2rem;
+      font-weight: bold;
+    }
+    .content {
+      margin-left: calc(var(--sidebar-width) + 16px);
+      padding: 36px 12px 10px 12px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 430px;
+      width: 100%;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 26px #0faaf040, 0 2px 12px #afdde580;
+      padding: 32px 25px 22px 25px;
+      animation: fadeIn 0.8s;
+      color: var(--color-dark);
+    }
+    @keyframes fadeIn {
+      from{opacity:0;transform:translateY(19px);}
+      to{opacity:1;}
+    }
+    h2 {
+      color: var(--color-dark);
+      text-align: center;
+      margin-bottom: 18px;
+      font-size: 2em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 1px 12px #afdde570;
+    }
+    .profile-photo {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 18px;
+    }
+    .profile-photo img {
+      width: 96px; height: 96px; object-fit: cover;
+      border-radius: 50%; box-shadow: 0 2px 13px #afdde573; border: 3px solid var(--color-aqua);
+      background: #e0eaff; margin-bottom: 7px;
+    }
+    input[type="file"] {
+      display: block; width: 100%; margin: 4px 0 14px 0;
+      color: var(--color-medium); font-size: 0.97em;
+    }
+    label { font-size: 1.09em; color: var(--color-medium); margin-top: 8px; font-weight: 500; }
+    input, textarea {
+      width: 100%; border-radius: 9px; border: 1.4px solid #ecd7cc;
+      padding: 10px; margin-bottom: 7px;
+      font-size: 15px;
+      background: #f5fafb; color: var(--color-dark);
+      box-sizing: border-box; transition: background 0.15s, border 0.15s;
+      box-shadow: 0 1px 5px #c3b7b633;
+    }
+    input:focus, textarea:focus {
+      background: #e6faff; border: 1.5px solid var(--color-aqua);
+    }
+    textarea { min-height:60px; }
+    .profile-actions {
+      display:flex; width:100%; justify-content:center; gap:24px; margin-top:8px;
+    }
+    /* PROFLE BUTTONS STYLED LIKE DASHBOARD */
+    .btnEdit, .btnSave {
+      width: 46%;
+      min-width:120px;
+      padding: 12px 0;
+      font-size: 1.09em;
+      border-radius: 10px;
+      border: none;
+      font-weight: bold;
+      box-shadow: 0 2px 10px #afdde540;
+      cursor: pointer;
+      background: var(--color-aqua);
+      color: #fff;
+      transition: background 0.22s, color 0.18s;
+    }
+    .btnEdit:hover, .btnSave:enabled:hover {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    .btnSave:disabled {
+      background: #c7d1ed57;
+      color: #999;
+      cursor: not-allowed;
+    }
+    body.dark-mode {
+      background: var(--color-dark);
+      color: var(--color-light);
+    }
+    body.dark-mode .sidebar {
+      background: var(--color-medium);
+      color: var(--color-light);
+      box-shadow: 2px 0 18px var(--color-accent);
+    }
+    body.dark-mode .sidebar h2,
+    body.dark-mode h2 {
+      color: var(--color-aqua);
+      text-shadow: 0 1px 12px #0faaf140;
+    }
+    body.dark-mode .sidebar a {
+      color: var(--color-light);
+      background: none;
+    }
+    body.dark-mode .sidebar a.active,
+    body.dark-mode .sidebar a:hover {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    body.dark-mode .sidebar a#logoutBtn {
+      background: var(--color-aqua);
+      color: #fff;
+    }
+    body.dark-mode .content {
+      background: none;
+      color: var(--color-light);
+    }
+    body.dark-mode .container {
+      background: var(--color-medium);
+      color: var(--color-light);
+    }
+    body.dark-mode .profile-photo img {
+      border-color: var(--color-aqua);
+      background: var(--color-light);
+      box-shadow: 0 2px 13px #0faaf180;
+    }
+    body.dark-mode .btnEdit, body.dark-mode .btnSave {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    body.dark-mode .btnEdit:hover, body.dark-mode .btnSave:enabled:hover {
+      background: var(--color-aqua);
+      color: #fff;
+    }
+    body.dark-mode .btnSave:disabled {
+      background: #2d4c55;
+      color: #999;
+    }
+    body.dark-mode .btnSave { background: var(--color-accent);}
+    @media (max-width:600px) {
+      .container {padding:14px 2vw;}
+      .content{margin-left:0;}
+    }
+  </style>
+  <script>
+    function applyDarkModeFromStorage() {
+      if (localStorage.getItem('userDarkMode') === 'on') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    function toggleDarkMode() {
+      const on = !document.body.classList.contains('dark-mode');
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('userDarkMode', on ? 'on' : 'off');
+    }
+    document.addEventListener('DOMContentLoaded', applyDarkModeFromStorage);
+    document.addEventListener('visibilitychange', applyDarkModeFromStorage);
+  </script>
+</head>
+<body>
+<button class="toggle-mode" onclick="toggleDarkMode()">Toggle Mode</button>
+  <div class="sidebar">
+    <div class="profile-image-container">
+      <img src="{{ profile_photo_url or '/static/default_user.png' }}" alt="Profile Photo" class="profile-image">
+    </div>
+    <h2>User Panel</h2>
+    <hr class="sidebar-hr">
+    <a href="{{ url_for('dashboard') }}" id="dashboardBtn" class="{% if current_page == 'dashboard' %}active{% endif %}">🏠 Dashboard</a>
+    <a href="{{ url_for('user_tickets_page') }}" id="myTicketsBtn" class="{% if current_page == 'tickets' %}active{% endif %}">🎫 My Tickets</a>
+    <a href="{{ url_for('user_created_tickets_page') }}" id="createTicketBtn" class="{% if current_page == 'create_ticket' %}active{% endif %}">➕ Create Ticket</a>
+    <a href="{{ url_for('user_profile_page') }}" id="profileBtn" class="{% if current_page == 'profile' %}active{% endif %}">👤 Profile</a>
+    <a href="{{ url_for('logout') }}" id="logoutBtn">🚪 Logout</a>
+  </div>
+  <div class="content">
+    <div class="container">
+      <h2>My Profile</h2>
+      <form id="profileForm" action="/userProfile" method="POST" enctype="multipart/form-data">
+        <div class="profile-photo">
+          <img src="{{ profile_photo_url or '/static/images/default_profile.png' }}" alt="Profile Photo">
+          <input type="file" id="photo" name="profile_photo" accept="image/*" onchange="loadPhoto(event)" disabled>
+        </div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required value="{{ name }}" readonly>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required value="{{ email }}" readonly>
+        <label for="password">Change Password</label>
+        <input type="password" id="password" name="password" placeholder="New password" readonly>
+        <label for="about">About Me</label>
+        <textarea id="about" name="about" placeholder="Tell us a bit about you..." readonly>{{ about }}</textarea>
+        <div class="profile-actions">
+          <button type="button" class="btnEdit" onclick="enableEditing()">Edit Profile</button>
+          <button type="submit" class="btnSave" id="saveBtn" disabled>Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    function enableEditing() {
+      document.getElementById('name').readOnly = false;
+      document.getElementById('password').readOnly = false;
+      document.getElementById('about').readOnly = false;
+      document.getElementById('photo').disabled = false;
+      document.getElementById('saveBtn').disabled = false;
+      document.getElementById('name').focus();
+    }
+    function loadPhoto(event) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        document.getElementById("previewImg").src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+    document.getElementById("profileForm").onsubmit = function() {
+      document.getElementById('saveBtn').disabled = true;
+    };
+  </script>
+</body>
+</html>
