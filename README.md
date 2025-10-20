@@ -1,49 +1,49 @@
 ```markdown
-# Customer Support Ticketing System – Web Application
+ Customer Support Ticketing System – Web Application
 
-## Overview
+ Overview
 This web application enables customers to raise support tickets, track their status, and allows support teams to efficiently view, assign, and resolve tickets. Built during an internship at Flipkart Pvt Ltd, the project develops skills in database design, backend APIs, and dynamic frontend interfaces.
 
 ---
 
-## Objectives
+ Objectives
 - Develop a secure, user-friendly system for customer and support team ticket management
 - Enable real-time ticket tracking and status updates
 - Provide admin and analytics tools for efficient support operations
 
 ---
 
-## Key Features
+ Key Features
 
-### User Portal
-- **Sign-up/Login:** Secure registration and authentication
-- **Profile Management:** Update profile, photo, password
-- **Submit Tickets:** Create support tickets (category, description, priority)
-- **Ticket History:** View current and past tickets, track statuses
+ User Portal
+- Sign-up/Login: Secure registration and authentication
+- Profile Management: Update profile, photo, password
+- Submit Tickets: Create support tickets (category, description, priority)
+- Ticket History: View current and past tickets, track statuses
 
-### Admin Portal
-- **Dashboard:** View all tickets, filter by status, priority, date, or agent
-- **Assign Tickets:** Allocate tickets to support agents
-- **Status Updates:** Mark tickets as Open, In Progress, Resolved, Closed
-- **Notes/Responses:** Add internal comments, ticket logs
+ Admin Portal
+- Dashboard: View all tickets, filter by status, priority, date, or agent
+- Assign Tickets: Allocate tickets to support agents
+- Status Updates: Mark tickets as Open, In Progress, Resolved, Closed
+- Notes/Responses: Add internal comments, ticket logs
 
-### Reports & Analytics
+ Reports & Analytics
 - Ticket volume and trends over time
 - Resolution time statistics
 - Agent performance dashboards
 
 ---
 
-## Technology Stack
+ Technology Stack
 
-- **Frontend:** HTML, CSS, JavaScript, Bootstrap/Tailwind
-- **Backend:** Python (Flask or Django)
-- **Database:** MySQL or PostgreSQL
-- **Version Control:** Git, GitHub
+- Frontend: HTML, CSS, JavaScript, Bootstrap/Tailwind
+- Backend: Python (Flask or Django)
+- Database: MySQL or PostgreSQL
+- Version Control: Git, GitHub
 
 ---
 
-## Architecture
+ Architecture
 
 ```
 [User Portal] <---> [Flask/Django APIs] <---> [MySQL/PostgreSQL Database]
@@ -56,14 +56,14 @@ This web application enables customers to raise support tickets, track their sta
 
 ---
 
-## Installation
+ Installation
 
 ```
 git clone https://github.com/Zuveriya-Tabassum/support-ticket.git
 cd support-ticket
 python -m venv venv
 venv\Scripts\activate     # Windows
-# or
+or
 source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 flask db upgrade          # For Flask-Migrate usage
@@ -72,17 +72,17 @@ flask run
 
 ---
 
-## Usage
+ Usage
 
-- **User:**  
+- User: 
   Register/login, update profile, submit tickets, track statuses
 
-- **Admin/Agent:**  
+- Admint:
   Login, view tickets, assign tickets, change statuses, add notes, view analytics
 
 ---
 
-## API Endpoints
+ API Endpoints
 
 | Route                  | Method  | Description            |
 |------------------------|---------|------------------------|
@@ -96,7 +96,7 @@ flask run
 
 ---
 
-## Known Issues / Limitations
+ Known Issues / Limitations
 
 - Notification emails not implemented
 - File uploads limited to profile images only
@@ -106,9 +106,9 @@ flask run
 ---
 
 
-## Contact
+ Contact
 
-- **Author:** Zuveriya Tabassum
-- **GitHub:** [support-ticket](https://github.com/Zuveriya-Tabassum/support-ticket)
-- **Email:** (tabassumzuveriya@gmail.com)
+- Author: Zuveriya Tabassum Shaik
+- GitHub: [support-ticket](https://github.com/Zuveriya-Tabassum/support-ticket)
+- Email: (tabassumzuveriya@gmail.com)
 
