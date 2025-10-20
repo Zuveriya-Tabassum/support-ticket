@@ -1,44 +1,114 @@
-# Customer Support Ticketing System
+```markdown
+# Customer Support Ticketing System – Web Application
 
-A secure, full-featured web application for Flipkart internship—raise support tickets, track status, manage agents & analytics.
+## Overview
+This web application enables customers to raise support tickets, track their status, and allows support teams to efficiently view, assign, and resolve tickets. Built during an internship at Flipkart Pvt Ltd, the project develops skills in database design, backend APIs, and dynamic frontend interfaces.
 
-## Features
+---
 
-- User/Admin/Agent dashboard (role-based)
-- Secure sign-up/login (bcrypt), session management
-- Ticket creation, status updates, assignment
-- Internal comments for collaboration
-- Advanced filtering, analytics/reports
-- Beautiful responsive UI with animations
+## Objectives
+- Develop a secure, user-friendly system for customer and support team ticket management
+- Enable real-time ticket tracking and status updates
+- Provide admin and analytics tools for efficient support operations
 
-## Setup
+---
 
-1. Clone repo: `git clone ...`
-2. Setup MySQL DB, run schema in `.sql`
-3. Copy `.env.example` to `.env` & fill credentials
-4. Install dependencies:
+## Key Features
+
+### User Portal
+- **Sign-up/Login:** Secure registration and authentication
+- **Profile Management:** Update profile, photo, password
+- **Submit Tickets:** Create support tickets (category, description, priority)
+- **Ticket History:** View current and past tickets, track statuses
+
+### Admin Portal
+- **Dashboard:** View all tickets, filter by status, priority, date, or agent
+- **Assign Tickets:** Allocate tickets to support agents
+- **Status Updates:** Mark tickets as Open, In Progress, Resolved, Closed
+- **Notes/Responses:** Add internal comments, ticket logs
+
+### Reports & Analytics
+- Ticket volume and trends over time
+- Resolution time statistics
+- Agent performance dashboards
+
+---
+
+## Technology Stack
+
+- **Frontend:** HTML, CSS, JavaScript, Bootstrap/Tailwind
+- **Backend:** Python (Flask or Django)
+- **Database:** MySQL or PostgreSQL
+- **Version Control:** Git, GitHub
+
+---
+
+## Architecture
+
+```
+[User Portal] <---> [Flask/Django APIs] <---> [MySQL/PostgreSQL Database]
+       |
+    [Admin Portal]
+```
+- Modular MVC structure
+- RESTful backend APIs
+- Secure authentication and session management
+
+---
+
+## Installation
+
+```
+git clone https://github.com/Zuveriya-Tabassum/support-ticket.git
+cd support-ticket
+python -m venv venv
+venv\Scripts\activate     # Windows
+# or
+source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
-5. Run server:
-python app.py
-6. Visit `http://localhost:5000` in browser
+flask db upgrade          # For Flask-Migrate usage
+flask run
+```
 
-## Screenshots
+---
 
-*(Add dashboard/home screenshots here)*
+## Usage
 
-## Folder Structure
+- **User:**  
+  Register/login, update profile, submit tickets, track statuses
 
-- static/css/style.css
-- static/js/...
-- templates/
-- app.py
-- requirements.txt
-- .env
+- **Admin/Agent:**  
+  Login, view tickets, assign tickets, change statuses, add notes, view analytics
 
-## Usage Guide
+---
 
-*(Add brief admin/user/agent portal instructions)*
+## API Endpoints
 
-## Credits
+| Route                  | Method  | Description            |
+|------------------------|---------|------------------------|
+| /signup                | POST    | Register new user      |
+| /login                 | POST    | Authenticate user      |
+| /profile               | GET/PUT | View or edit profile   |
+| /tickets               | GET/POST| View/submit ticket     |
+| /tickets/<id>          | GET/PUT | View/update ticket     |
+| /admin/tickets/assign  | POST    | Assign ticket to agent |
+| /admin/reports         | GET     | View analytics         |
 
-Created by SHAIK ZUVERIYA TABASSUM, Flipkart Internship
+---
+
+## Known Issues / Limitations
+
+- Notification emails not implemented
+- File uploads limited to profile images only
+- Role management basic (no advanced permissions)
+- Reporting features basic (expandable)
+
+---
+
+
+## Contact
+
+- **Author:** Zuveriya Tabassum
+- **GitHub:** [support-ticket](https://github.com/Zuveriya-Tabassum/support-ticket)
+- **Email:** (tabassumzuveriya@gmail.com)
+
