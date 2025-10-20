@@ -45,11 +45,11 @@ This web application enables customers to raise support tickets, track their sta
 
  Architecture
 
-```
+
 [User Portal] <---> [Flask/Django APIs] <---> [MySQL/PostgreSQL Database]
        |
     [Admin Portal]
-```
+
 - Modular MVC structure
 - RESTful backend APIs
 - Secure authentication and session management
@@ -58,7 +58,7 @@ This web application enables customers to raise support tickets, track their sta
 
  Installation
 
-```
+
 git clone https://github.com/Zuveriya-Tabassum/support-ticket.git
 cd support-ticket
 python -m venv venv
@@ -68,7 +68,7 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 flask db upgrade          # For Flask-Migrate usage
 flask run
-```
+
 
 ---
 
